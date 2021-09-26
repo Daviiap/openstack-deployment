@@ -89,6 +89,64 @@ def get_infos_by_file(imageController, flavorController, securityGroupController
     return configs
 
 
+def program(flavorController, imageController, securityGroupController, networkController, keypairController, serverController):
+    system('clear')
+    print('(1) Criar instância à partir de configurações de arquivo .yml / .yaml')
+    print('(2) Criar instância à partir de configurações de opções pelo terminal')
+    print('(3) Excluir instância')
+    print('(0) Sair\n')
+    option = input('Selecione: ')
+    while option != '0' and option != '1' and option != '2' and option != '3':
+        option = input('Opção inválida, tente novamente: ')
+
+    if option != '0':
+        instance_infos = None
+        status = None
+        if option == '1':
+            instance_infos = get_infos_by_file(
+                imageController=imageController,
+                flavorController=flavorController,
+                securityGroupController=securityGroupController,
+                networkController=networkController,
+                keypairController=keypairController
+            )
+        elif option == '2':
+            instance_infos = get_infos_by_prompt(
+                imageController=imageController,
+                flavorController=flavorController,
+                securityGroupController=securityGroupController,
+                networkController=networkController,
+                keypairController=keypairController
+            )
+        elif option == '3':
+            system('clear')
+            print_table(serverController.list_servers())
+            delete_status = serverController.delete_server(
+                input('\nDigite o nome da instância que você deseja excluir: '))
+            if delete_status == 'success':
+                status = 'Instância excluída com sucesso.'
+            else:
+                status = 'Instância não encontrada.'
+
+        if instance_infos != None:
+            system('clear')
+            print('Criando instância \'' +
+                  instance_infos['instance_name'] + '\'...')
+            status = serverController.create_server(
+                flavor_name=instance_infos['flavor_name'],
+                image_id=instance_infos['image_id'],
+                instance_name=instance_infos['instance_name'],
+                keypair_name=instance_infos['keypair'],
+                network_name=instance_infos['network'],
+                security_groups=instance_infos['security_groups']
+            )
+
+        print(status)
+        input()
+        program(flavorController, imageController,
+                securityGroupController, networkController, keypairController, serverController)
+
+
 def main():
     cloud = input('Digite o nome da cloud que você deseja se conectar: ')
     openstack_conn = ConnectionController.create_connection(cloud)
@@ -105,56 +163,14 @@ def main():
     print_table(serverController.list_servers())
     input('Pressione Enter para continuar...')
 
-    system('clear')
-    print('(1) Criar instância à partir de configurações de arquivo .yml / .yaml')
-    print('(2) Criar instância à 0partir de configurações de opções pelo terminal')
-    print('(3) Excluir instância')
-    print('(0) Sair\n')
-    option = input('Selecione: ')
-    while option != '0' and option != '1' and option != '2' and option != '3':
-        option = input('Opção inválida, tente novamente: ')
-
-    instance_infos = None
-    if option == '1':
-        instance_infos = get_infos_by_file(
-            imageController=imageController,
-            flavorController=flavorController,
-            securityGroupController=securityGroupController,
-            networkController=networkController,
-            keypairController=keypairController
-        )
-    elif option == '2':
-        instance_infos = get_infos_by_prompt(
-            imageController=imageController,
-            flavorController=flavorController,
-            securityGroupController=securityGroupController,
-            networkController=networkController,
-            keypairController=keypairController
-        )
-    elif option == '3':
-        system('clear')
-        print_table(serverController.list_servers())
-        status = serverController.delete_server(
-            input('\nDigite o nome da instância que você deseja excluir: '))
-        if status == 'success':
-            print('Instância excluída com sucesso.')
-        else:
-            print('Instância não encontrada.')
-
-    if instance_infos != None:
-        system('clear')
-        print('Criando instância \'' +
-              instance_infos['instance_name'] + '\'...')
-        status = serverController.create_server(
-            flavor_name=instance_infos['flavor_name'],
-            image_id=instance_infos['image_id'],
-            instance_name=instance_infos['instance_name'],
-            keypair_name=instance_infos['keypair'],
-            network_name=instance_infos['network'],
-            security_groups=instance_infos['security_groups']
-        )
-
-        print(status)
+    program(
+        flavorController,
+        imageController,
+        securityGroupController,
+        networkController,
+        keypairController,
+        serverController
+    )
 
 
 main()
