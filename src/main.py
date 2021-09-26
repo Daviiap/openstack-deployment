@@ -76,29 +76,26 @@ def main():
     cloud = input('Digite o nome da cloud que você deseja se conectar: ')
     openstack_conn = ConnectionController.create_connection(cloud)
 
-    server = openstack_conn.get_server('teste')
-    print(server)
+    flavorController = FlavorController(openstack_conn)
+    imageController = ImageController(openstack_conn)
+    securityGroupController = SecurityGroupController(openstack_conn)
+    serverController = ServerController(openstack_conn)
+    networkController = NetworkController(openstack_conn)
+    keypairController = KeypairController(openstack_conn)
 
-    # flavorController = FlavorController(openstack_conn)
-    # imageController = ImageController(openstack_conn)
-    # securityGroupController = SecurityGroupController(openstack_conn)
-    # serverController = ServerController(openstack_conn)
-    # networkController = NetworkController(openstack_conn)
-    # keypairController = KeypairController(openstack_conn)
+    system('clear')
+    print('Lista de servers já existentes na cloud \'' + cloud + '\':')
+    print_table(serverController.list_servers())
+    input('Pressione Enter para continuar...')
 
-    # system('clear')
-    # print('Lista de servers já existentes na cloud \'' + cloud + '\':')
-    # print_table(serverController.list_servers())
-    # input('Pressione Enter para continuar...')
-
-    # program(
-    #     flavorController,
-    #     imageController,
-    #     securityGroupController,
-    #     networkController,
-    #     keypairController,
-    #     serverController
-    # )
+    program(
+        flavorController,
+        imageController,
+        securityGroupController,
+        networkController,
+        keypairController,
+        serverController
+    )
 
 
 main()
