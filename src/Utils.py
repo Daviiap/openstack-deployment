@@ -7,10 +7,13 @@ def print_table(table):
 
 
 def load_yml(file_path):
-    with open(file_path) as yml_file:
-        dictionary = yaml.load(yml_file, Loader=yaml.FullLoader)
+    try:
+        with open(file_path) as yml_file:
+            dictionary = yaml.load(yml_file, Loader=yaml.FullLoader)
 
-    return dictionary
+        return dictionary
+    except FileNotFoundError:
+        return None
 
 
 def get_input(prompt, retry_prompt, validation_function):
@@ -26,7 +29,7 @@ def get_security_groups_input(prompt, validation_function):
     value = input(prompt).split(';')
 
     for security_group in value:
-        if validation_function(security_group) == False:
+        if validation_function(security_group.strip()) == False:
             value = get_security_groups_input(
                 'Security Group ' + security_group + ' não existe, tente novamente (lembre de digitar todos novamente): ', validation_function)
 

@@ -33,7 +33,7 @@ class ServerController:
         try:
             server = self.connection.compute.wait_for_server(server)
             return 'Instância criada com sucesso.'
-        except Exception as _:
+        except Exception:
             return 'Error ao criar instância.'
 
     def delete_server(self, server_name):
