@@ -5,10 +5,11 @@ from Exceptions.RamException import RamException
 
 class ErrorController:
     
-    def __init__(self, connection):
+    def __init__(self, connection) -> None:
         self.connection = connection
 
     def erro_vcpu(self, flavor):
+        print(flavor)
         vcpu_wanted = self.connection.compute.find_flavor(flavor).vcpus
         vcpu_used = self.connection.get_compute_limits()['total_cores_used']
         vcpu_max = self.connection.get_compute_limits()['max_total_cores']
