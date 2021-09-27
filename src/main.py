@@ -11,6 +11,7 @@ from Controllers.ErrorController import ErrorController
 from UseCases.DeleteInstance import delete_instance
 from UseCases.GetInfosByFile import get_infos_by_file
 from UseCases.GetInfosByPrompt import get_infos_by_prompt
+from UseCases.ListServers import list_servers
 from UseCases.RunCICD import run_ci_cd
 from Utils import print_table
 
@@ -21,9 +22,10 @@ def program(flavorController, imageController, securityGroupController, networkC
     print('(2) Criar instância à partir de configurações de opções pelo terminal')
     print('(3) Excluir instância')
     print('(4) Rodar script CI/CD')
+    print('(5) Listar VM\'s na cloud')
     print('(0) Sair\n')
     option = input('Selecione: ')
-    while option != '0' and option != '1' and option != '2' and option != '3' and option != '4':
+    while option != '0' and option != '1' and option != '2' and option != '3' and option != '4' and option != '5':
         option = input('Opção inválida, tente novamente: ')
 
     if option != '0':
@@ -51,6 +53,8 @@ def program(flavorController, imageController, securityGroupController, networkC
             status = delete_instance(serverController=serverController)
         elif option == '4':
             run_ci_cd()
+        elif option == '5':
+            list_servers(serverController)
 
         if instance_infos != None:
             system('clear')

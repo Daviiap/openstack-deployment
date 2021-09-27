@@ -3,12 +3,13 @@ class ServerController:
         self.connection = connection
 
     def list_servers(self):
-        servers = [['id', 'name']]
+        servers = [['id', 'name', 'ip']]
 
         for server in self.connection.compute.servers():
             server_attrs = []
             server_attrs.append(server.id)
             server_attrs.append(server.name)
+            server_attrs.append(server['addresses']['provider'][0]['addr'])
             servers.append(server_attrs)
 
         return servers
