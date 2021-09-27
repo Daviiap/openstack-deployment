@@ -50,10 +50,7 @@ def program(flavorController, imageController, securityGroupController, networkC
         elif option == '3':
             status = delete_instance(serverController=serverController)
         elif option == '4':
-            print('connecting ssh...')
-            # ssh = paramiko.SSHClient()
-            # ssh ubuntu@10.11.19.72 -i ../VPN/cloudKeys/cloud.key
-            # ssh.connect('10.11.19.72', username='<username>', password='<password>', key_filename='../VPN/cloudKeys/cloud.key')
+            system('bash ./deploy/config.sh')
 
         if instance_infos != None:
             system('clear')
@@ -88,7 +85,7 @@ def main():
     errorController = ErrorController(openstack_conn)
 
     system('clear')
-    #print('Lista de servers já existentes na cloud \'' + cloud + '\':')
+    print('Lista de servers já existentes na cloud \'' + cloud + '\':')
     print_table(serverController.list_servers())
     input('Pressione Enter para continuar...')
 
