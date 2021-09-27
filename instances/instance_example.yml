@@ -1,0 +1,8 @@
+flavor_name: flavor_name
+image_id: image_id
+instance_name: instance_name
+keypair: keypair
+network: network
+security_groups: 
+  - security_group_1
+  - security_group_2
