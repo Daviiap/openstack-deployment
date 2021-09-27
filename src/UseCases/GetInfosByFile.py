@@ -1,13 +1,18 @@
 from os import system
 from Utils import load_yml
+from Controllers.TratamentoController import TratamentoController
 
-
-def get_infos_by_file(imageController, flavorController, securityGroupController, networkController, keypairController):
+def get_infos_by_file(imageController, flavorController, securityGroupController, networkController, keypairController, errorController):
     system('clear')
     file_path = input('Digite o path para o arquivo de configuração: ')
     file_configs = load_yml(file_path)
 
     entry_is_valid = True
+
+    TratamentoController.instancia(errorController)
+    TratamentoController.vcpu(errorController, file_configs['flavor_name'])
+    TratamentoController.ram(errorController, file_configs['flavor_name'])
+    TratamentoController.grupo_seguranca(errorController, file_configs['security_groups'])
 
     if file_configs != None:
         if imageController.image_exist(file_configs['image_id']) == False:

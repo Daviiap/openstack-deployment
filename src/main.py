@@ -12,7 +12,6 @@ from UseCases.DeleteInstance import delete_instance
 from UseCases.GetInfosByFile import get_infos_by_file
 from UseCases.GetInfosByPrompt import get_infos_by_prompt
 from Utils import print_table
-import paramiko
 
 
 def program(flavorController, imageController, securityGroupController, networkController, keypairController, serverController, errorController):

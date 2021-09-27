@@ -1,9 +1,10 @@
+from time import sleep
+from os import system
+
 from Exceptions.VcpuException import VcpuException
 from Exceptions.InstanciaException import InstanciaException
 from Exceptions.SecurityGroupException import SecurityGroupException
 from Exceptions.RamException import RamException
-from time import sleep
-from os import system
 
 class TratamentoController:
 

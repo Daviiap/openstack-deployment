@@ -1,8 +1,6 @@
 from os import system
 from Utils import get_security_groups_input, get_input, print_table
 from Controllers.TratamentoController import TratamentoController
-from Exceptions.VcpuException import VcpuException
-from time import sleep
 
 def get_infos_by_prompt(imageController, flavorController, securityGroupController, networkController, keypairController, errorController):
     
