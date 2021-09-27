@@ -49,6 +49,7 @@ def program(flavorController, imageController, securityGroupController, networkC
         elif option == '3':
             status = delete_instance(serverController=serverController)
         elif option == '4':
+            input('Conecte-se à VPN e pressione Enter para continuar...')
             system('bash ./deploy/config.sh')
 
         if instance_infos != None:
@@ -68,7 +69,7 @@ def program(flavorController, imageController, securityGroupController, networkC
             print(status)
         input('Pressione Enter para continuar...')
         program(flavorController, imageController,
-                securityGroupController, networkController, keypairController, serverController)
+                securityGroupController, networkController, keypairController, serverController, errorController)
 
 
 def main():
