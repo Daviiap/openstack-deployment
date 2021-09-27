@@ -1,8 +1,11 @@
 from os import system
 from Utils import get_security_groups_input, get_input, print_table
+from Controllers.TratamentoController import TratamentoController
 
+def get_infos_by_prompt(imageController, flavorController, securityGroupController, networkController, keypairController, errorController):
+    
+    TratamentoController.instancia(errorController)
 
-def get_infos_by_prompt(imageController, flavorController, securityGroupController, networkController, keypairController):
     system('clear')
     print_table(imageController.list_images())
     image_id = get_input('Digite o id da imagem desejada: ',
@@ -13,13 +16,18 @@ def get_infos_by_prompt(imageController, flavorController, securityGroupControll
     print_table(flavorController.list_flavors())
     flavor_name = get_input('Digite o nome do flavor desejado: ',
                             'Flavor não existe, tente novamente: ',
-                            flavorController.flavor_exist)
-
+                            flavorController.flavor_exist)                    
+   
+    #TratamentoController.vcpu(errorController, flavor_name)
+    TratamentoController.ram(errorController, flavor_name)
+    
     system('clear')
     print_table(securityGroupController.list_security_groups())
     security_groups = get_security_groups_input(
         'Digite o nome dos security groups separados somente por \';\': ',
         securityGroupController.security_group_exist)
+
+    TratamentoController.grupo_seguranca(errorController, security_groups)
 
     system('clear')
     print_table(networkController.list_networks())
@@ -35,6 +43,8 @@ def get_infos_by_prompt(imageController, flavorController, securityGroupControll
 
     system('clear')
     instance_name = input('Digite o nome da instância: ').strip()
+
+    
 
     return {
         'instance_name': instance_name,

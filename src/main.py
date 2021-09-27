@@ -12,7 +12,6 @@ from UseCases.DeleteInstance import delete_instance
 from UseCases.GetInfosByFile import get_infos_by_file
 from UseCases.GetInfosByPrompt import get_infos_by_prompt
 from Utils import print_table
-import paramiko
 
 
 def program(flavorController, imageController, securityGroupController, networkController, keypairController, serverController, errorController):
@@ -50,10 +49,8 @@ def program(flavorController, imageController, securityGroupController, networkC
         elif option == '3':
             status = delete_instance(serverController=serverController)
         elif option == '4':
-            print('connecting ssh...')
-            # ssh = paramiko.SSHClient()
-            # ssh ubuntu@10.11.19.72 -i ../VPN/cloudKeys/cloud.key
-            # ssh.connect('10.11.19.72', username='<username>', password='<password>', key_filename='../VPN/cloudKeys/cloud.key')
+            input('Conecte-se à VPN e pressione Enter para continuar...')
+            system('bash ./deploy/config.sh')
 
         if instance_infos != None:
             system('clear')
@@ -72,7 +69,7 @@ def program(flavorController, imageController, securityGroupController, networkC
             print(status)
         input('Pressione Enter para continuar...')
         program(flavorController, imageController,
-                securityGroupController, networkController, keypairController, serverController)
+                securityGroupController, networkController, keypairController, serverController, errorController)
 
 
 def main():
@@ -88,7 +85,7 @@ def main():
     errorController = ErrorController(openstack_conn)
 
     system('clear')
-    #print('Lista de servers já existentes na cloud \'' + cloud + '\':')
+    print('Lista de servers já existentes na cloud \'' + cloud + '\':')
     print_table(serverController.list_servers())
     input('Pressione Enter para continuar...')
 
