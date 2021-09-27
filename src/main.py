@@ -7,6 +7,7 @@ from Controllers.SecurityGroupController import SecurityGroupController
 from Controllers.ServerController import ServerController
 from Controllers.KeypairController import KeypairController
 from Controllers.ConnectionController import ConnectionController
+from Controllers.ErrorController import ErrorController
 from UseCases.DeleteInstance import delete_instance
 from UseCases.GetInfosByFile import get_infos_by_file
 from UseCases.GetInfosByPrompt import get_infos_by_prompt
