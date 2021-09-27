@@ -7,10 +7,15 @@ from Controllers.SecurityGroupController import SecurityGroupController
 from Controllers.ServerController import ServerController
 from Controllers.KeypairController import KeypairController
 from Controllers.ConnectionController import ConnectionController
+from Controllers.ErrorController import ErrorController
 from Utils import get_security_groups_input, get_input, load_yml, print_table
 
 
-def get_infos_by_prompt(imageController, flavorController, securityGroupController, networkController, keypairController):
+def get_infos_by_prompt(imageController, flavorController, securityGroupController, networkController, keypairController, errorController):
+    
+    
+    #errorController.erro_instancias()
+
     system('clear')
     print_table(imageController.list_images())
     image_id = get_input('Digite o id da imagem desejada: ',
@@ -22,12 +27,16 @@ def get_infos_by_prompt(imageController, flavorController, securityGroupControll
     flavor_name = get_input('Digite o nome do flavor desejado: ',
                             'Flavor não existe, tente novamente: ',
                             flavorController.flavor_exist)
+    errorController.erro_ram(flavor_name)
+    errorController.erro_vcpu(flavor_name)
 
     system('clear')
     print_table(securityGroupController.list_security_groups())
     security_groups = get_security_groups_input(
         'Digite o nome dos security groups separados somente por \';\': ',
         securityGroupController.security_group_exist)
+
+    errorController.erro_grupo_seguranca(security_groups)
 
     system('clear')
     print_table(networkController.list_networks())
@@ -89,7 +98,7 @@ def get_infos_by_file(imageController, flavorController, securityGroupController
     return configs
 
 
-def program(flavorController, imageController, securityGroupController, networkController, keypairController, serverController):
+def program(flavorController, imageController, securityGroupController, networkController, keypairController, serverController, errorController):
     system('clear')
     print('(1) Criar instância à partir de configurações de arquivo .yml / .yaml')
     print('(2) Criar instância à partir de configurações de opções pelo terminal')
@@ -116,7 +125,8 @@ def program(flavorController, imageController, securityGroupController, networkC
                 flavorController=flavorController,
                 securityGroupController=securityGroupController,
                 networkController=networkController,
-                keypairController=keypairController
+                keypairController=keypairController,
+                errorController=errorController
             )
         elif option == '3':
             system('clear')
@@ -157,9 +167,10 @@ def main():
     serverController = ServerController(openstack_conn)
     networkController = NetworkController(openstack_conn)
     keypairController = KeypairController(openstack_conn)
+    errorController = ErrorController(openstack_conn)
 
     system('clear')
-    print('Lista de servers já existentes na cloud \'' + cloud + '\':')
+    #print('Lista de servers já existentes na cloud \'' + cloud + '\':')
     print_table(serverController.list_servers())
     input('Pressione Enter para continuar...')
 
@@ -169,7 +180,8 @@ def main():
         securityGroupController,
         networkController,
         keypairController,
-        serverController
+        serverController,
+        errorController
     )
 
 
