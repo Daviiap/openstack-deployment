@@ -14,7 +14,7 @@ from Utils import print_table
 import paramiko
 
 
-def program(flavorController, imageController, securityGroupController, networkController, keypairController, serverController):
+def program(flavorController, imageController, securityGroupController, networkController, keypairController, serverController, errorController):
     system('clear')
     print('(1) Criar instância à partir de configurações de arquivo .yml / .yaml')
     print('(2) Criar instância à partir de configurações de opções pelo terminal')
@@ -34,7 +34,8 @@ def program(flavorController, imageController, securityGroupController, networkC
                 flavorController=flavorController,
                 securityGroupController=securityGroupController,
                 networkController=networkController,
-                keypairController=keypairController
+                keypairController=keypairController,
+                errorController=errorController
             )
         elif option == '2':
             instance_infos = get_infos_by_prompt(
@@ -42,7 +43,8 @@ def program(flavorController, imageController, securityGroupController, networkC
                 flavorController=flavorController,
                 securityGroupController=securityGroupController,
                 networkController=networkController,
-                keypairController=keypairController
+                keypairController=keypairController,
+                errorController=errorController
             )
         elif option == '3':
             status = delete_instance(serverController=serverController)
@@ -82,9 +84,10 @@ def main():
     serverController = ServerController(openstack_conn)
     networkController = NetworkController(openstack_conn)
     keypairController = KeypairController(openstack_conn)
+    errorController = ErrorController(openstack_conn)
 
     system('clear')
-    print('Lista de servers já existentes na cloud \'' + cloud + '\':')
+    #print('Lista de servers já existentes na cloud \'' + cloud + '\':')
     print_table(serverController.list_servers())
     input('Pressione Enter para continuar...')
 
@@ -94,7 +97,8 @@ def main():
         securityGroupController,
         networkController,
         keypairController,
-        serverController
+        serverController,
+        errorController
     )
 
 
