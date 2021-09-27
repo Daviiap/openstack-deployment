@@ -14,7 +14,7 @@ from Utils import get_security_groups_input, get_input, load_yml, print_table
 def get_infos_by_prompt(imageController, flavorController, securityGroupController, networkController, keypairController, errorController):
     
     
-    #errorController.erro_instancias()
+    errorController.erro_instancias()
 
     system('clear')
     print_table(imageController.list_images())
@@ -63,12 +63,16 @@ def get_infos_by_prompt(imageController, flavorController, securityGroupControll
     }
 
 
-def get_infos_by_file(imageController, flavorController, securityGroupController, networkController, keypairController):
+def get_infos_by_file(imageController, flavorController, securityGroupController, networkController, keypairController, errorController):
     system('clear')
+    
+    
     file_path = input('Digite o path para o arquivo de configuração: ')
     file_configs = load_yml(file_path)
 
     entry_is_valid = True
+
+   
 
     if imageController.image_exist(file_configs['image_id']) == False:
         print('[ERROR] Image' + file_configs['image_id'] + 'não existe.')
@@ -90,6 +94,11 @@ def get_infos_by_file(imageController, flavorController, securityGroupController
         if securityGroupController.security_group_exist(security_group) == False:
             print('[ERROR] Security_group' + security_group + 'não existe.')
             entry_is_valid = False
+
+    errorController.erro_instancias()
+    errorController.erro_ram(file_configs['flavor_name'])
+    errorController.erro_vcpu(file_configs['flavor_name'])
+    errorController.erro_grupo_seguranca(file_configs['security_groups'])
 
     configs = None
     if entry_is_valid:
@@ -117,7 +126,8 @@ def program(flavorController, imageController, securityGroupController, networkC
                 flavorController=flavorController,
                 securityGroupController=securityGroupController,
                 networkController=networkController,
-                keypairController=keypairController
+                keypairController=keypairController,
+                errorController=errorController
             )
         elif option == '2':
             instance_infos = get_infos_by_prompt(
