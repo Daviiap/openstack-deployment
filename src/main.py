@@ -11,6 +11,7 @@ from Controllers.ErrorController import ErrorController
 from UseCases.DeleteInstance import delete_instance
 from UseCases.GetInfosByFile import get_infos_by_file
 from UseCases.GetInfosByPrompt import get_infos_by_prompt
+from UseCases.RunCICD import run_ci_cd
 from Utils import print_table
 
 
@@ -19,7 +20,7 @@ def program(flavorController, imageController, securityGroupController, networkC
     print('(1) Criar instância à partir de configurações de arquivo .yml / .yaml')
     print('(2) Criar instância à partir de configurações de opções pelo terminal')
     print('(3) Excluir instância')
-    print('(4) Conectar ssh')
+    print('(4) Rodar script CI/CD')
     print('(0) Sair\n')
     option = input('Selecione: ')
     while option != '0' and option != '1' and option != '2' and option != '3' and option != '4':
@@ -49,8 +50,7 @@ def program(flavorController, imageController, securityGroupController, networkC
         elif option == '3':
             status = delete_instance(serverController=serverController)
         elif option == '4':
-            input('Conecte-se à VPN e pressione Enter para continuar...')
-            system('bash ./deploy/config.sh')
+            run_ci_cd()
 
         if instance_infos != None:
             system('clear')

@@ -4,3 +4,4 @@ clouds.yml
 clouds.yaml
 /configs/instance.yml
 instance.yml
+private_key.*

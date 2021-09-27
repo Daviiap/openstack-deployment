@@ -32,6 +32,7 @@ class ServerController:
 
         try:
             server = self.connection.compute.wait_for_server(server)
+            print('IP: ' + server['addresses']['provider'][0]['addr'])
             return 'Instância criada com sucesso.'
         except Exception:
             return 'Error ao criar instância.'
