@@ -7,104 +7,11 @@ from Controllers.SecurityGroupController import SecurityGroupController
 from Controllers.ServerController import ServerController
 from Controllers.KeypairController import KeypairController
 from Controllers.ConnectionController import ConnectionController
-from Controllers.ErrorController import ErrorController
-from Utils import get_security_groups_input, get_input, load_yml, print_table
-
-
-def get_infos_by_prompt(imageController, flavorController, securityGroupController, networkController, keypairController, errorController):
-    
-    
-    errorController.erro_instancias()
-
-    system('clear')
-    print_table(imageController.list_images())
-    image_id = get_input('Digite o id da imagem desejada: ',
-                         'Imagem não existe, tente novamente: ',
-                         imageController.image_exist)
-
-    system('clear')
-    print_table(flavorController.list_flavors())
-    flavor_name = get_input('Digite o nome do flavor desejado: ',
-                            'Flavor não existe, tente novamente: ',
-                            flavorController.flavor_exist)
-    errorController.erro_ram(flavor_name)
-    errorController.erro_vcpu(flavor_name)
-
-    system('clear')
-    print_table(securityGroupController.list_security_groups())
-    security_groups = get_security_groups_input(
-        'Digite o nome dos security groups separados somente por \';\': ',
-        securityGroupController.security_group_exist)
-
-    errorController.erro_grupo_seguranca(security_groups)
-
-    system('clear')
-    print_table(networkController.list_networks())
-    network = get_input('Digite o nome da network desejada: ',
-                        'Network não existe, tente novamente: ',
-                        networkController.network_exist)
-
-    system('clear')
-    print_table(keypairController.list_keypairs())
-    keypair = get_input('Digite o nome da keypair desejada: ',
-                        'Keypair não existe, tente novamente: ',
-                        keypairController.keypair_exist)
-
-    system('clear')
-    instance_name = input('Digite o nome da instância: ').strip()
-
-    return {
-        'instance_name': instance_name,
-        'image_id': image_id,
-        'flavor_name': flavor_name,
-        'security_groups': security_groups,
-        'network': network,
-        'keypair': keypair,
-    }
-
-
-def get_infos_by_file(imageController, flavorController, securityGroupController, networkController, keypairController, errorController):
-    system('clear')
-    
-    
-    file_path = input('Digite o path para o arquivo de configuração: ')
-    file_configs = load_yml(file_path)
-
-    entry_is_valid = True
-
-   
-
-    if imageController.image_exist(file_configs['image_id']) == False:
-        print('[ERROR] Image' + file_configs['image_id'] + 'não existe.')
-        entry_is_valid = False
-
-    if flavorController.flavor_exist(file_configs['flavor_name']) == False:
-        print('[ERROR] Flavor' + file_configs['flavor_name'] + 'não existe.')
-        entry_is_valid = False
-
-    if networkController.network_exist(file_configs['network']) == False:
-        print('[ERROR] Network' + file_configs['network'] + 'não existe.')
-        entry_is_valid = False
-
-    if keypairController.keypair_exist(file_configs['keypair']) == False:
-        print('[ERROR] Keypair' + file_configs['keypair'] + 'não existe.')
-        entry_is_valid = False
-
-    for security_group in file_configs['security_groups']:
-        if securityGroupController.security_group_exist(security_group) == False:
-            print('[ERROR] Security_group' + security_group + 'não existe.')
-            entry_is_valid = False
-
-    errorController.erro_instancias()
-    errorController.erro_ram(file_configs['flavor_name'])
-    errorController.erro_vcpu(file_configs['flavor_name'])
-    errorController.erro_grupo_seguranca(file_configs['security_groups'])
-
-    configs = None
-    if entry_is_valid:
-        configs = file_configs
-
-    return configs
+from UseCases.DeleteInstance import delete_instance
+from UseCases.GetInfosByFile import get_infos_by_file
+from UseCases.GetInfosByPrompt import get_infos_by_prompt
+from Utils import print_table
+import paramiko
 
 
 def program(flavorController, imageController, securityGroupController, networkController, keypairController, serverController, errorController):
@@ -112,9 +19,10 @@ def program(flavorController, imageController, securityGroupController, networkC
     print('(1) Criar instância à partir de configurações de arquivo .yml / .yaml')
     print('(2) Criar instância à partir de configurações de opções pelo terminal')
     print('(3) Excluir instância')
+    print('(4) Conectar ssh')
     print('(0) Sair\n')
     option = input('Selecione: ')
-    while option != '0' and option != '1' and option != '2' and option != '3':
+    while option != '0' and option != '1' and option != '2' and option != '3' and option != '4':
         option = input('Opção inválida, tente novamente: ')
 
     if option != '0':
@@ -139,14 +47,12 @@ def program(flavorController, imageController, securityGroupController, networkC
                 errorController=errorController
             )
         elif option == '3':
-            system('clear')
-            print_table(serverController.list_servers())
-            delete_status = serverController.delete_server(
-                input('\nDigite o nome da instância que você deseja excluir: '))
-            if delete_status == 'success':
-                status = 'Instância excluída com sucesso.'
-            else:
-                status = 'Instância não encontrada.'
+            status = delete_instance(serverController=serverController)
+        elif option == '4':
+            print('connecting ssh...')
+            # ssh = paramiko.SSHClient()
+            # ssh ubuntu@10.11.19.72 -i ../VPN/cloudKeys/cloud.key
+            # ssh.connect('10.11.19.72', username='<username>', password='<password>', key_filename='../VPN/cloudKeys/cloud.key')
 
         if instance_infos != None:
             system('clear')
@@ -161,8 +67,9 @@ def program(flavorController, imageController, securityGroupController, networkC
                 security_groups=instance_infos['security_groups']
             )
 
-        print(status)
-        input()
+        if status != None:
+            print(status)
+        input('Pressione Enter para continuar...')
         program(flavorController, imageController,
                 securityGroupController, networkController, keypairController, serverController)
 
