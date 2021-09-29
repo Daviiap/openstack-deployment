@@ -77,8 +77,7 @@ def program(flavorController, imageController, securityGroupController, networkC
 
 
 def main():
-    cloud = input('Digite o nome da cloud que você deseja se conectar: ')
-    openstack_conn = ConnectionController.create_connection(cloud)
+    openstack_conn = ConnectionController.create_connection()
 
     flavorController = FlavorController(openstack_conn)
     imageController = ImageController(openstack_conn)
@@ -89,7 +88,7 @@ def main():
     errorController = ErrorController(openstack_conn)
 
     system('clear')
-    print('Lista de servers já existentes na cloud \'' + cloud + '\':')
+    print('Lista de servers já existentes na cloud:')
     print_table(serverController.list_servers())
     input('Pressione Enter para continuar...')
 

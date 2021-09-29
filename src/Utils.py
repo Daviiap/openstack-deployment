@@ -1,5 +1,6 @@
 import yaml
 from tabulate import tabulate
+import os
 
 
 def print_table(table):
@@ -34,3 +35,14 @@ def get_security_groups_input(prompt, validation_function):
                 'Security Group ' + security_group + ' não existe, tente novamente (lembre de digitar todos novamente): ', validation_function)
 
     return value
+
+def get_env_variables():
+    return {
+        'version': os.getenv("OS_IDENTITY_API_VERSION"),
+        'username': os.getenv("OS_USERNAME"),
+        'password': os.getenv("OS_PASSWORD"),
+        'auth_url': os.getenv("OS_AUTH_URL"),
+        'project_domain_id': os.getenv("OS_PROJECT_DOMAIN_ID"),
+        'user_domain_name': os.getenv("OS_USER_DOMAIN_NAME"),
+        'project_name': os.getenv("OS_PROJECT_NAME"),
+    }
