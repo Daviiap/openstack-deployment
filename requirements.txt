@@ -1,0 +1,4 @@
+wheel
+python-openstackclient
+openstacksdk
+tabulate
